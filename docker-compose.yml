@@ -1,0 +1,53 @@
+version: 3.7
+
+services:
+  server:
+    build:
+      context: ./taskapi
+      dockerfile: Dockerfile
+    image: task-server
+    container_name: task-node-server
+    command: npm start
+    volumes:
+      - ./taskapi/:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - 8000:8000
+    depends_on:
+      - mongo
+    env_file: ./taskapi/.env
+    environment:
+      - NODE_ENV=development
+    networks:
+      - app-network
+    mongo:
+      image: mongo
+      ports: -27017:27017
+      networks:
+        - app-network
+    client:
+      build:
+        context: ./taskfront
+        dockerfile: Dockerfile
+      image: task-client
+      container_name: task-react-client
+      command: npm start
+      volumes:
+        - ./taskfront:/usr/app
+        - /usr/app/node_modules
+      depends_on:
+        - server
+      ports:
+        - 3000:3000
+      networks:
+        - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  data-volumes:
+  node_modules:
+  web-root:
+    driver: local
