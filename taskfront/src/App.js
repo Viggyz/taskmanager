@@ -37,14 +37,14 @@ function App() {
         setTaskList((tasks) => [...tasks, resp]);
       }
     } else {
-      if (taskname == "") {
+      if (taskname === "") {
         alert("update cant be blank");
         return;
       }
       var resp = await sendUpdate(taskname, editId);
       if (resp) {
         setEditing((state) => !editing);
-        setTaskList((tasks) => tasks.map((t) => (t._id != editId ? t : resp)));
+        setTaskList((tasks) => tasks.map((t) => (t._id !== editId ? t : resp)));
       }
     }
   };
@@ -53,7 +53,7 @@ function App() {
     if (editing && editId !== taskid) {
       setEditId(taskid);
     }
-    if (editing && editId == taskid) {
+    if (editing && editId === taskid) {
       setEditId(0);
       setEditing(false);
     } else {
@@ -68,14 +68,14 @@ function App() {
     // console.log(taskid);
     var resp = await deleteTask(taskid);
     if (resp) {
-      setTaskList((tasks) => tasks.filter((task) => task._id != taskid));
+      setTaskList((tasks) => tasks.filter((task) => task._id !== taskid));
     }
   };
 
   const handleTick = async (task) => {
     var resp = await ToggleTick(task);
     if (resp) {
-      setTaskList((tasks) => tasks.map((t) => (t._id != task._id ? t : resp)));
+      setTaskList((tasks) => tasks.map((t) => (t._id !== task._id ? t : resp)));
     }
   };
 
@@ -116,7 +116,7 @@ function App() {
               <div
                 className="singlet"
                 style={
-                  editing && task._id == editId
+                  editing && task._id === editId
                     ? { backgroundColor: "#a1300d" }
                     : { backgroundColor: "#cf8e80" }
                 }

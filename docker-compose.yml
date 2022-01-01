@@ -1,4 +1,4 @@
-version: 3.7
+version: "3.7"
 
 services:
   server:
@@ -17,30 +17,35 @@ services:
       - mongo
     env_file: ./taskapi/.env
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=production
+      - MONGO_URL=mongodb://mongo:27017/tasks
+      - FRONT_URL=client:3000
     networks:
       - app-network
-    mongo:
-      image: mongo
-      ports: -27017:27017
-      networks:
-        - app-network
-    client:
-      build:
-        context: ./taskfront
-        dockerfile: Dockerfile
-      image: task-client
-      container_name: task-react-client
-      command: npm start
-      volumes:
-        - ./taskfront:/usr/app
-        - /usr/app/node_modules
-      depends_on:
-        - server
-      ports:
-        - 3000:3000
-      networks:
-        - app-network
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
+    networks:
+      - app-network
+  client:
+    build:
+      context: ./taskfront
+      dockerfile: Dockerfile
+    image: task-client
+    container_name: task-react-client
+    command: npm start
+    environment:
+      - REACT_APP_HTTP_PROXY=http://localhost:8000
+    volumes:
+      - ./taskfront:/usr/app
+      - /usr/app/node_modules
+    depends_on:
+      - server
+    ports:
+      - 3000:3000
+    networks:
+      - app-network
 
 networks:
   app-network:
